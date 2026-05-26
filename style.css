@@ -1,0 +1,40 @@
+/* Configuração de Fontes e Cores de Base */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F2F2F2;
+}
+
+.font-title {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Customização e Estilização da Barra de Rolagem */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F2F2F2;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #105773;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0B8C7F;
+}
+
+/* Estado ativo dos botões de rádio estilizados no Registo */
+label:has(input:checked) {
+    background-color: #105773;
+    color: white;
+    border-color: #105773;
+}
+
+label:has(input[value="doctor"]:checked) {
+    background-color: #0B8C7F;
+    color: white;
+    border-color: #0B8C7F;
+}
