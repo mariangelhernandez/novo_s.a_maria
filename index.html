@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoreLife - Saúde & Bem-Estar para Si</title>
+    
+    <!-- Tailwind CSS (Estilos base e utilitários) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ml-primary': '#105773',
+                        'ml-secondary': '#0B8C7F',
+                        'ml-accent': '#21A680',
+                        'ml-success': '#4BBF73',
+                        'ml-bg': '#F2F2F2',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts - Montserrat & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 🔗 INTERLIGAÇÃO: Importa o ficheiro CSS externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- NOTIFICAÇÕES (Toast) -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- CABEÇALHO / NAVEGAÇÃO -->
+    <header class="bg-[#f7fbfd] text-slate-800 shadow-sm border-b border-slate-200 sticky top-0 z-40 transition-all h-20 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
+            
+            <!-- LOGÓTIPO OFICIAL INTEGRADO -->
+            <div class="flex items-center cursor-pointer" onclick="goToHome()">
+                <img src="./logo.png" alt="Logótipo MoreLife" title="MoreLife" class="h-16 sm:h-20 object-contain" />
+            </div>
+
+            <!-- (menu mobile removido) -->
+
+            <!-- MENU DE NAVEGAÇÃO -->
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" onclick="scrollToSection('como-funciona')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Como Funciona</a>
+                <a href="#" onclick="scrollToSection('especialidades')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Áreas de Apoio</a>
+                <a href="#" onclick="scrollToSection('sobre')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Quem Somos</a>
+            </nav>
+
+            <!-- ÁREA DO UTILIZADOR -->
+            <div class="flex items-center gap-3" id="auth-header-actions">
+                <!-- Preenchido dinamicamente via script.js -->
+            </div>
+        </div>
+    </header>
+
+    <!-- mobile navigation removed -->
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-grow">
+        
+        <!-- SECÇÃO DA LANDING PAGE -->
+        <section id="section-landing" class="block">
+            <!-- HERO -->
+            <div class="relative bg-gradient-to-br from-[#105773] to-[#0B8C7F] text-white py-16 md:py-24 px-4 overflow-hidden">
+                <div class="absolute inset-0 opacity-10">
+                    <svg class="w-full h-full" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)">
+                        <defs>
+                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                </div>
+                <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+                    <div class="space-y-6">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#21A680] text-white shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                            Unindo Conhecimento Académico e Solidariedade Social
+                        </span>
+                        <h1 class="font-title text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                            A ponte entre a <span class="text-[#4BBF73]">prática clínica</span> e o <span class="text-teal-200">apoio social</span>.
+                        </h1>
+                        <p class="text-lg text-teal-50 font-normal leading-relaxed">
+                            O MoreLife aproxima residentes e pós-graduandos universitários que precisam de consolidar a sua aprendizagem prática, de pessoas em situação de vulnerabilidade que necessitam de cuidados de saúde humanizados de excelência. Tudo 100% gratuito.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                            <button onclick="openRegisterModal('patient')" class="px-8 py-4 bg-[#21A680] hover:bg-[#1f9372] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                Preciso de Consulta
+                                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                            </button>
+                            <button onclick="openRegisterModal('doctor')" class="px-8 py-4 bg-white/10 hover:bg-white/20 border-2 border-white/30 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 backdrop-blur-sm">
+                                Sou Doutor / Residente
+                                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- HERO GRAPHIC CARD -->
+                    <div class="bg-white rounded-3xl p-6 md:p-8 text-slate-800 shadow-2xl relative border border-teal-100">
+                        <div class="absolute -top-4 -right-4 bg-[#4BBF73] text-white p-3 rounded-2xl shadow-lg transform rotate-6">
+                            <span class="block font-bold text-center text-xs">Apoio Social</span>
+                            <span class="block font-black text-center text-base">Gratuito</span>
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#105773] mb-4">Os Nossos Números de Impacto</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#0B8C7F]" id="stats-consultas">1.420+</span>
+                                <span class="text-xs text-slate-500 font-medium">Consultas Realizadas</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#21A680]" id="stats-profissionais">280+</span>
+                                <span class="text-xs text-slate-500 font-medium">Universitários Ativos</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#4BBF73]" id="stats-universidades">12</span>
+                                <span class="text-xs text-slate-500 font-medium">Universidades Parceiras</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#105773]">100%</span>
+                                <span class="text-xs text-slate-500 font-medium">Grátis para a População</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-slate-100 pt-4 flex items-center gap-3">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 rounded-full bg-rose-200 border-2 border-white flex items-center justify-center font-bold text-xs">👨‍⚕️</div>
+                                <div class="w-8 h-8 rounded-full bg-teal-200 border-2 border-white flex items-center justify-center font-bold text-xs">👩‍⚕️</div>
+                                <div class="w-8 h-8 rounded-full bg-amber-200 border-2 border-white flex items-center justify-center font-bold text-xs">👩</div>
+                            </div>
+                            <p class="text-xs text-slate-500 font-medium">
+                                Junte-se a centenas de académicos de destaque do país.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMO FUNCIONA -->
+            <div id="como-funciona" class="py-20 px-4 max-w-7xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="font-title text-3xl md:text-4xl font-bold text-[#105773] mb-4">Como funciona o MoreLife?</h2>
+                    <p class="text-slate-600">Simplificamos a marcação de consultas de apoio social, garantindo que o residente aprende na prática enquanto o paciente recebe cuidados de primeira linha.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- PASSO 1 -->
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all">
+                        <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#105773] mb-6 group-hover:bg-[#105773] group-hover:text-white transition-colors">
+                            1
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#105773] mb-3">Registo Rápido</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Os pacientes informam as suas necessidades e o agregado familiar. Os médicos e pós-graduandos indicam a universidade, especialidade e o respetivo registo clínico ativo.
+                        </p>
+                    </div>
+
+                    <!-- PASSO 2 -->
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all">
+                        <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#0B8C7F] mb-6 group-hover:bg-[#0B8C7F] group-hover:text-white transition-colors">
+                            2
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#0B8C7F] mb-3">Pedido de Consulta</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            O paciente escolhe a área em que precisa de consulta (ex: Medicina Dentária, Psicologia) e envia uma breve descrição do sintoma ou situação clínica que apresenta.
+                        </p>
+                    </div>
+
+                    <!-- PASSO 3 -->
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all">
+                        <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#21A680] mb-6 group-hover:bg-[#21A680] group-hover:text-white transition-colors">
+                            3
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#21A680] mb-3">Consulta na Clínica</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            O doutor aceita o caso, define a data, a hora e a clínica universitária onde decorrerá a consulta de apoio supervisionada. O paciente é logo alertado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÁREAS DE ATENDIMENTO -->
+            <div id="especialidades" class="bg-white py-20 px-4">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <h2 class="font-title text-3xl md:text-4xl font-bold text-[#105773] mb-4">Áreas de Atendimento Oferecidas</h2>
+                        <p class="text-slate-600">Académicos de instituições prestigiadas sob estreita supervisão do corpo docente em várias valências essenciais de saúde.</p>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#105773] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🦷</div>
+                            <h3 class="font-title font-bold text-[#105773] text-lg mb-2">Medicina Dentária</h3>
+                            <p class="text-xs text-slate-500">Avaliações preventivas, restaurações, destartarizações e extrações.</p>
+                        </div>
+                        
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#0B8C7F] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🧠</div>
+                            <h3 class="font-title font-bold text-[#0B8C7F] text-lg mb-2">Psicologia</h3>
+                            <p class="text-xs text-slate-500">Apoio de saúde mental, psicoterapia individual e acompanhamento.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#21A680] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">💪</div>
+                            <h3 class="font-title font-bold text-[#21A680] text-lg mb-2">Fisioterapia</h3>
+                            <p class="text-xs text-slate-500">Reabilitação motora, alívio de dor e correção postural.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#4BBF73] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🗣️</div>
+                            <h3 class="font-title font-bold text-[#4BBF73] text-lg mb-2">Terapia da Fala</h3>
+                            <p class="text-xs text-slate-500">Apoio na fala, linguagem, deglutição e reabilitação vocal.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#105773] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🥗</div>
+                            <h3 class="font-title font-bold text-[#105773] text-lg mb-2">Nutrição</h3>
+                            <p class="text-xs text-slate-500">Planos alimentares, reeducação de hábitos e nutrição geral.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUEM SOMOS -->
+            <div id="sobre" class="py-20 px-4 max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-[#0B8C7F]">A Nossa Missão Social</span>
+                        <h2 class="font-title text-3xl md:text-4xl font-bold text-[#105773] mt-2 mb-6">Por que razão criámos a MoreLife?</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>Sabemos que milhares de pós-graduandos e médicos internos precisam de encontrar pacientes elegíveis para cumprir horas de estágio, desenvolver relatórios e avançar nos estudos académicos.</p>
+                            <p class="font-semibold text-[#105773]">Por outro lado, muitas famílias enfrentam barreiras e longos tempos de espera para consultas privadas ou de especialidade na saúde.</p>
+                            <p>A plataforma **MoreLife** atua como este canal seguro, transparente e direto, em conformidade com as regras das faculdades e clínicas-escola parceiras do projeto.</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-slate-200 flex items-center gap-6">
+                            <div>
+                                <span class="block text-2xl font-bold text-[#105773]">Protocolo</span>
+                                <span class="text-xs text-slate-500">Com diversas universidades públicas</span>
+                            </div>
+                            <div class="w-px h-10 bg-slate-200"></div>
+                            <div>
+                                <span class="block text-2xl font-bold text-[#21A680]">Garantia</span>
+                                <span class="text-xs text-slate-500">Consultas validadas por professores</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="bg-gradient-to-tr from-[#105773] to-[#4BBF73] rounded-3xl p-1 md:p-2 shadow-2xl overflow-hidden aspect-[4/3] flex items-center justify-center">
+                            <div class="bg-white rounded-2xl w-full h-full p-8 flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-[#105773] bg-[#F2F2F2] px-3 py-1 rounded-full">Prática Supervisionada</span>
+                                    <span class="text-xs text-slate-400">Ref: 282-ML</span>
+                                </div>
+                                <div class="my-6">
+                                    <h4 class="font-title text-2xl font-bold text-slate-800 leading-snug">"Conseguimos o diagnóstico do meu filho de forma atenciosa, rápida e sem qualquer custo."</h4>
+                                    <p class="text-slate-500 text-sm mt-3">— Maria Auxiliadora, mãe de paciente de Terapia da Fala</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold">M</div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-slate-800">Clínica Universitária Estatal</h5>
+                                        <p class="text-xs text-[#21A680]">Protocolo Académico Ativo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ÁREA DO PACIENTE -->
+        <section id="section-patient" class="hidden py-10 px-4 max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- PERFIL E NOVO PEDIDO -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-[#105773] text-white rounded-full flex items-center justify-center text-2xl font-bold">👤</div>
+                            <div>
+                                <span class="text-xs font-semibold text-[#0B8C7F] uppercase tracking-wider">Paciente Registado</span>
+                                <h3 id="patient-name-badge" class="font-title text-xl font-bold text-slate-800">Nome do Paciente</h3>
+                                <p id="patient-email-badge" class="text-xs text-slate-500">paciente@email.com</p>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-4 space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Rendimento Mensal:</span>
+                                <span id="patient-income-badge" class="font-bold text-slate-700">R$ 1.500,00</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Contacto:</span>
+                                <span id="patient-phone-badge" class="font-bold text-slate-700">(00) 00000-0000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORMULÁRIO -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="font-title text-lg font-bold text-[#105773] mb-4 flex items-center gap-2"><span>📝</span> Pedir Nova Consulta</h3>
+                        <form id="form-appointment-request" onsubmit="handleAppointmentSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Área Necessária</label>
+                                <select id="req-specialty" required class="w-full bg-[#F2F2F2] border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F] text-sm">
+                                    <option value="" disabled selected>Escolha a área clínica...</option>
+                                    <option value="Medicina Dentária">Medicina Dentária</option>
+                                    <option value="Psicologia">Psicologia</option>
+                                    <option value="Fisioterapia">Fisioterapia</option>
+                                    <option value="Terapia da Fala">Terapia da Fala</option>
+                                    <option value="Nutrição">Nutrição</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Explique brevemente o seu caso</label>
+                                <textarea id="req-description" required rows="4" placeholder="Ex: Sinto dores musculares..." class="w-full bg-[#F2F2F2] border border-slate-200 rounded-xl p-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F] text-sm resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-[#0B8C7F] hover:bg-[#21A680] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">Enviar Pedido Gratuito</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- CONSULTAS E MÉDICOS -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-title text-xl font-bold text-[#105773]">Os Meus Pedidos de Consulta</h3>
+                            <span class="text-xs bg-slate-100 text-slate-600 font-bold px-3 py-1.5 rounded-full" id="patient-total-requests">0 no total</span>
+                        </div>
+                        <div id="patient-appointments-list" class="space-y-4"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <h3 class="font-title text-xl font-bold text-[#105773]">Residentes e Médicos Parceiros</h3>
+                            <div class="flex gap-2">
+                                <select id="search-specialty-filter" onchange="filterDoctors()" class="bg-[#F2F2F2] border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none text-slate-700">
+                                    <option value="">Todas as Áreas</option>
+                                    <option value="Medicina Dentária">Medicina Dentária</option>
+                                    <option value="Psicologia">Psicologia</option>
+                                    <option value="Fisioterapia">Fisioterapia</option>
+                                    <option value="Terapia da Fala">Terapia da Fala</option>
+                                    <option value="Nutrição">Nutrição</option>
+                                </select>
+                                <input type="text" id="search-university-input" onkeyup="filterDoctors()" placeholder="Filtrar por Universidade..." class="bg-[#F2F2F2] border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none text-slate-700">
+                            </div>
+                        </div>
+                        <div id="doctors-list" class="grid sm:grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ÁREA DO PROFISSIONAL / DOUTOR -->
+        <section id="section-doctor" class="hidden py-10 px-4 max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- PERFIL -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-[#0B8C7F] text-white rounded-full flex items-center justify-center text-2xl font-bold">👨‍⚕️</div>
+                            <div>
+                                <span class="text-xs font-semibold text-[#4BBF73] uppercase tracking-wider">Doutor / Pós-Graduando</span>
+                                <h3 id="doctor-name-badge" class="font-title text-xl font-bold text-slate-800">Dr. Nome Completo</h3>
+                                <p id="doctor-specialty-badge" class="text-sm text-slate-500">Especialidade</p>
+                                <div class="border-t border-slate-100 pt-4 mt-4 space-y-3 text-sm text-slate-600">
+                                    <div class="flex justify-between">
+                                        <span class="font-semibold">Registo Profissional</span>
+                                        <span id="doctor-register-badge" class="text-slate-700">CÉD-00000</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="font-semibold">Instituição</span>
+                                        <span id="doctor-university-badge" class="text-slate-700 text-right">Universidade</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-title text-xl font-bold text-[#105773]">Pedidos Pendentes para a Sua Área</h3>
+                                <span id="doctor-pending-count" class="text-xs bg-[#E6F8F1] text-[#0B8C7F] font-bold px-3 py-1.5 rounded-full">0 pendentes</span>
+                            </div>
+                            <div id="doctor-pending-requests-list" class="space-y-4"></div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-title text-xl font-bold text-[#105773]">Agenda Confirmada</h3>
+                                <span id="doctor-agenda-count" class="text-xs bg-[#E6F8F1] text-[#0B8C7F] font-bold px-3 py-1.5 rounded-full">0 Confirmados</span>
+                            </div>
+                            <div id="doctor-confirmed-appointments" class="space-y-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- MODAL DE APROVAÇÃO DE CONSULTA -->
+        <div id="approve-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/70 p-4">
+            <div class="w-full max-w-xl bg-white rounded-3xl p-6 shadow-2xl relative">
+                <button type="button" onclick="closeApproveModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700">✕</button>
+                <h2 class="font-title text-2xl font-bold text-[#105773] mb-2">Agendar Pedido de Consulta</h2>
+                <p class="text-sm text-slate-500 mb-6">Escolha data, hora e local para confirmar a consulta do paciente.</p>
+                <form id="form-approve-appointment" onsubmit="handleApproveSubmit(event)" class="space-y-4">
+                    <input id="approve-appointment-id" type="hidden">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">Data</label>
+                        <input id="approve-date" type="date" required class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">Hora</label>
+                        <input id="approve-time" type="time" required class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-600 mb-2">Localização</label>
+                        <input id="approve-location" type="text" required placeholder="e.g. Gabinete 4, Piso 1" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                    </div>
+                    <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                        <button type="button" onclick="closeApproveModal()" class="px-5 py-3 text-sm font-semibold rounded-2xl border border-slate-200 text-slate-700 hover:bg-slate-100">Cancelar</button>
+                        <button type="submit" class="px-5 py-3 text-sm font-semibold rounded-2xl bg-[#0B8C7F] text-white hover:bg-[#0C6F64]">Confirmar Agendamento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL DE AUTENTICAÇÃO -->
+        <div id="auth-modal" class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/70 p-4">
+            <div class="w-full max-w-md md:max-w-2xl bg-white rounded-3xl p-6 shadow-2xl relative">
+                <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700">✕</button>
+                <div class="mb-6">
+                    <span id="modal-title-icon" class="text-3xl">🔑</span>
+                    <h2 id="modal-title-text" class="font-title text-2xl font-bold text-[#105773] mt-4">Aceder à Plataforma</h2>
+                    <p id="modal-subtitle-text" class="text-sm text-slate-500 mt-2">Bem-vindo(a) de volta à sua conta MoreLife.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center justify-between mb-6 gap-3">
+                    <div class="flex w-full sm:w-auto gap-3">
+                        <button id="tab-login" type="button" onclick="switchAuthTab('login')" class="flex-1 py-2 px-3 text-sm font-semibold text-[#105773] border-b-2 border-transparent hover:border-[#0B8C7F]">Entrar</button>
+                        <button id="tab-register" type="button" onclick="switchAuthTab('register')" class="flex-1 py-2 px-3 text-sm font-semibold text-slate-600 hover:text-[#105773]">Registar</button>
+                    </div>
+                    <button id="modal-register-cta" type="button" onclick="submitRegisterFromModal()" class="hidden bg-[#0B8C7F] text-white px-5 rounded-full text-sm font-bold h-10 flex items-center justify-center shadow-sm w-full sm:w-auto sm:ml-6">Registrar</button>
+                </div>
+                <div id="form-login">
+                    <form onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-2">E-mail</label>
+                            <input id="login-email" type="email" required class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-2">Senha</label>
+                            <div class="relative">
+                                <input id="login-password" type="password" required class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('login-password')">👁️</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="inline-flex items-center text-sm"><input id="login-remember" type="checkbox" class="mr-2">Lembrar de mim</label>
+                            <a href="#" onclick="handleForgotPassword()" class="text-sm text-[#0B8C7F]">Esqueci minha senha</a>
+                        </div>
+                        <button type="submit" class="w-full rounded-2xl bg-[#0B8C7F] text-white font-bold py-3 text-sm hover:bg-[#0C6F64]">Entrar</button>
+                    </form>
+                </div>
+                <div id="form-register" class="hidden">
+                    <form onsubmit="handleRegister(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold flex items-center gap-2">
+                                <input type="radio" name="reg-role" value="patient" checked onchange="toggleRegisterFormFields('patient')" class="h-4 w-4 text-[#0B8C7F] border-slate-300" />
+                                Paciente
+                            </label>
+                            <label class="cursor-pointer rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold flex items-center gap-2">
+                                <input type="radio" name="reg-role" value="doctor" onchange="toggleRegisterFormFields('doctor')" class="h-4 w-4 text-[#0B8C7F] border-slate-300" />
+                                Médico / Residente
+                            </label>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-2">Nome Completo</label>
+                            <input id="reg-name" type="text" required placeholder="Ex.: Maria da Silva" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                            <p id="reg-name-error" class="text-rose-600 text-xs mt-1 hidden"></p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-600 mb-2">Nome de usuário</label>
+                                <input id="reg-username" type="text" required placeholder="Escolha um nome de utilizador" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                <p id="reg-username-error" class="text-rose-600 text-xs mt-1 hidden"></p>
+
+                                <label class="block text-sm font-semibold text-slate-600 mb-2 mt-3">E-mail</label>
+                                <input id="reg-email" type="email" required placeholder="nome@exemplo.com" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                <p id="reg-email-error" class="text-rose-600 text-xs mt-1 hidden"></p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-600 mb-2">Senha</label>
+                                <div class="relative">
+                                    <input id="reg-password" type="password" required placeholder="Mín. 8 caracteres" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                    <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password')">👁️</button>
+                                </div>
+                                <div class="h-2 mt-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div id="reg-password-strength" class="h-2 w-0 bg-amber-400 transition-all"></div>
+                                </div>
+                                <p id="reg-password-error" class="text-rose-600 text-xs mt-1 hidden"></p>
+
+                                <label class="block text-sm font-semibold text-slate-600 mb-2 mt-3">Confirmar Senha</label>
+                                <div class="relative">
+                                    <input id="reg-password-confirm" type="password" required placeholder="Repita a sua senha" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                    <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password-confirm')">👁️</button>
+                                </div>
+                                <p id="reg-password-confirm-error" class="text-rose-600 text-xs mt-1 hidden"></p>
+                            </div>
+                        </div>
+                        <div id="patient-only-fields">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">CPF</label>
+                                    <input id="reg-cpf" type="text" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">Telefone</label>
+                                    <input id="reg-phone" type="tel" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">Rendimento</label>
+                                    <input id="reg-income" type="number" min="0" step="0.01" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="doctor-only-fields" class="hidden">
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">N.º Profissional</label>
+                                    <input id="reg-professional-id" type="text" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">Universidade</label>
+                                    <input id="reg-university" type="text" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">Especialidade</label>
+                                    <input id="reg-specialty" type="text" class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
+                                </div>
+                            </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-2">Foto de Perfil (opcional)</label>
+                            <input id="reg-photo" type="file" accept="image/*" class="w-full text-sm" onchange="handleRegPhotoChange(event)" />
+                            <img id="reg-photo-preview" src="" alt="Preview" class="mt-2 w-20 h-20 object-cover rounded-md hidden" />
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <input id="reg-terms" type="checkbox" class="mt-1 h-4 w-4 text-[#0B8C7F]" />
+                            <label for="reg-terms" class="text-xs text-slate-600">Li e concordo com os <a href="#" class="text-[#0B8C7F] underline">Termos de Utilização</a> e a <a href="#" class="text-[#0B8C7F] underline">Política de Privacidade</a>.</label>
+                        </div>
+                        <p id="reg-terms-error" class="text-rose-600 text-xs mt-1 hidden"></p>
+                        <button id="reg-submit-btn" type="submit" class="w-full rounded-2xl bg-[#0B8C7F] text-white font-bold py-3 text-sm hover:bg-[#0C6F64]">Criar Conta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <script src="script.js"></script>
+</body>
+</html>
