@@ -110,7 +110,6 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function scrollToSection(id) {
-    goToHome();
     setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
