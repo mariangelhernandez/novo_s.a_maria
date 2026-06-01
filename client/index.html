@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MoreLife - Saúde & Bem-Estar para Si</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ml-primary': '#105773',
+                        'ml-secondary': '#0B8C7F',
+                        'ml-accent': '#21A680',
+                        'ml-success': '#4BBF73',
+                        'ml-bg': '#F2F2F2'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Toasts -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Header -->
+    <header class="bg-[#f7fbfd] text-slate-800 shadow-sm border-b border-slate-200 sticky top-0 z-40 transition-all h-20 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
+            <div class="flex items-center cursor-pointer" onclick="goToHome()">
+                <img src="../img/logo.png" alt="Logótipo MoreLife" title="MoreLife" class="h-16 sm:h-20 object-contain" />
+            </div>
+
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" onclick="scrollToSection('section-landing')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Início</a>
+                <a href="#" onclick="scrollToSection('como-funciona')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Como Funciona</a>
+                <a href="#" onclick="scrollToSection('especialidades')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Áreas de Apoio</a>
+                <a href="#" onclick="scrollToSection('sobre')" class="text-slate-600 hover:text-[#105773] font-semibold transition-colors">Quem Somos</a>
+             
+            </nav>
+
+            <div class="flex items-center gap-3" id="auth-header-actions">
+                <!-- preenchido por script.js -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-grow">
+        <!-- HERO + CTA -->
+        <section id="section-landing" class="block">
+            <div class="relative bg-gradient-to-br from-[#105773] to-[#0B8C7F] text-white py-16 md:py-24 px-4 overflow-hidden">
+                <div class="absolute inset-0 opacity-10 pointer-events-none">
+                    <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)"/>
+                    </svg>
+                </div>
+
+                <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+                    <div class="space-y-6">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#21A680] text-white shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                            Unindo Conhecimento Académico e Solidariedade Social
+                        </span>
+
+                        <h1 class="font-title text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                            A ponte entre a <span class="text-[#4BBF73]">prática clínica</span> e o <span class="text-teal-200">apoio social</span>.
+                        </h1>
+
+                        <p class="text-lg text-teal-50 font-normal leading-relaxed max-w-2xl">
+                            O MoreLife aproxima residentes e pós-graduandos universitários que precisam de consolidar a sua aprendizagem prática, de pessoas em situação de vulnerabilidade que necessitam de cuidados de saúde humanizados de excelência. Tudo 100% gratuito.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                            <button onclick="openRegisterModal('patient')" class="px-8 py-4 bg-[#21A680] hover:bg-[#1f9372] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                Preciso de Consulta
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                            </button>
+
+                            <button onclick="openRegisterModal('doctor')" class="px-8 py-4 bg-white/10 hover:bg-white/20 border-2 border-white/30 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 backdrop-blur-sm">
+                                Sou Doutor / Residente
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-6 md:p-8 text-slate-800 shadow-2xl relative border border-teal-100">
+                        <div class="absolute -top-4 -right-4 bg-[#4BBF73] text-white p-3 rounded-2xl shadow-lg transform rotate-6">
+                            <span class="block font-bold text-center text-xs">Apoio Social</span>
+                            <span class="block font-black text-center text-base">Gratuito</span>
+                        </div>
+
+                        <h3 class="font-title text-xl font-bold text-[#105773] mb-4">Os Nossos Números de Impacto</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#0B8C7F]" id="stats-consultas">1.420+</span>
+                                <span class="text-xs text-slate-500 font-medium">Consultas Realizadas</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#21A680]" id="stats-profissionais">280+</span>
+                                <span class="text-xs text-slate-500 font-medium">Universitários Ativos</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#4BBF73]" id="stats-universidades">12</span>
+                                <span class="text-xs text-slate-500 font-medium">Universidades Parceiras</span>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <span class="block text-3xl font-black text-[#105773]">100%</span>
+                                <span class="text-xs text-slate-500 font-medium">Grátis para a População</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-4 flex items-center gap-3">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 rounded-full bg-rose-200 border-2 border-white flex items-center justify-center font-bold text-xs">👨‍⚕️</div>
+                                <div class="w-8 h-8 rounded-full bg-teal-200 border-2 border-white flex items-center justify-center font-bold text-xs">👩‍⚕️</div>
+                                <div class="w-8 h-8 rounded-full bg-amber-200 border-2 border-white flex items-center justify-center font-bold text-xs">👩</div>
+                            </div>
+                            <p class="text-xs text-slate-500 font-medium">
+                                Junte-se a centenas de académicos de destaque do país.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Como Funciona -->
+            <div id="como-funciona" class="py-20 px-4 max-w-7xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="font-title text-3xl md:text-4xl font-bold text-[#105773] mb-4">Como funciona o MoreLife?</h2>
+                    <p class="text-slate-600">Simplificamos a marcação de consultas de apoio social, garantindo que o residente aprende na prática enquanto o paciente recebe cuidados de primeira linha.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all">
+                        <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#105773] mb-6 group-hover:bg-[#105773] group-hover:text-white transition-colors">
+                            1
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#105773] mb-3">Registo Rápido</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Os pacientes informam as suas necessidades e o agregado familiar. Os médicos e pós-graduandos indicam a universidade, especialidade e o respetivo registo clínico ativo.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all">
+                        <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#0B8C7F] mb-6 group-hover:bg-[#0B8C7F] group-hover:text-white transition-colors">
+                            2
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#0B8C7F] mb-3">Pedido de Consulta</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            O paciente escolhe a área em que precisa de consulta (ex: Medicina Dentária, Psicologia) e envia uma breve descrição do sintoma ou situação clínica que apresenta.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm relative group hover:shadow-md transition-all">
+                        <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-2xl font-bold text-[#21A680] mb-6 group-hover:bg-[#21A680] group-hover:text-white transition-colors">
+                            3
+                        </div>
+                        <h3 class="font-title text-xl font-bold text-[#21A680] mb-3">Consulta na Clínica</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            O doutor aceita o caso, define a data, a hora e a clínica universitária onde decorrerá a consulta de apoio supervisionada. O paciente é logo alertado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Especialidades -->
+            <div id="especialidades" class="bg-white py-20 px-4">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <h2 class="font-title text-3xl md:text-4xl font-bold text-[#105773] mb-4">Áreas de Atendimento Oferecidas</h2>
+                        <p class="text-slate-600">Académicos de instituições prestigiadas sob estreita supervisão do corpo docente em várias valências essenciais de saúde.</p>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#105773] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🦷</div>
+                            <h3 class="font-title font-bold text-[#105773] text-lg mb-2">Medicina Dentária</h3>
+                            <p class="text-xs text-slate-500">Avaliações preventivas, restaurações, destartarizações e extrações.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#0B8C7F] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🧠</div>
+                            <h3 class="font-title font-bold text-[#0B8C7F] text-lg mb-2">Psicologia</h3>
+                            <p class="text-xs text-slate-500">Apoio de saúde mental, psicoterapia individual e acompanhamento.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#21A680] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">💪</div>
+                            <h3 class="font-title font-bold text-[#21A680] text-lg mb-2">Fisioterapia</h3>
+                            <p class="text-xs text-slate-500">Reabilitação motora, alívio de dor e correção postural.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#4BBF73] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🗣️</div>
+                            <h3 class="font-title font-bold text-[#4BBF73] text-lg mb-2">Terapia da Fala</h3>
+                            <p class="text-xs text-slate-500">Apoio na fala, linguagem, deglutição e reabilitação vocal.</p>
+                        </div>
+
+                        <div class="bg-[#F2F2F2] p-6 rounded-2xl border border-slate-100 text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <div class="w-16 h-16 bg-[#105773] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-md">🥗</div>
+                            <h3 class="font-title font-bold text-[#105773] text-lg mb-2">Nutrição</h3>
+                            <p class="text-xs text-slate-500">Planos alimentares, reeducação de hábitos e nutrição geral.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quem Somos -->
+            <div id="sobre" class="py-20 px-4 max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-[#0B8C7F]">A Nossa Missão Social</span>
+                        <h2 class="font-title text-3xl md:text-4xl font-bold text-[#105773] mt-2 mb-6">Por que razão criámos a MoreLife?</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>Sabemos que milhares de pós-graduandos e médicos internos precisam de encontrar pacientes elegíveis para cumprir horas de estágio, desenvolver relatórios e avançar nos estudos académicos.</p>
+                            <p class="font-semibold text-[#105773]">Por outro lado, muitas famílias enfrentam barreiras e longos tempos de espera para consultas privadas ou de especialidade na saúde.</p>
+                            <p>A plataforma <strong>MoreLife</strong> atua como este canal seguro, transparente e direto, em conformidade com as regras das faculdades e clínicas-escola parceiras do projeto.</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-slate-200 flex items-center gap-6">
+                            <div>
+                                <span class="block text-2xl font-bold text-[#105773]">Protocolo</span>
+                                <span class="text-xs text-slate-500">Com diversas universidades públicas</span>
+                            </div>
+                            <div class="w-px h-10 bg-slate-200"></div>
+                            <div>
+                                <span class="block text-2xl font-bold text-[#21A680]">Garantia</span>
+                                <span class="text-xs text-slate-500">Consultas validadas por professores</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="bg-gradient-to-tr from-[#105773] to-[#4BBF73] rounded-3xl p-1 md:p-2 shadow-2xl overflow-hidden aspect-[4/3] flex items-center justify-center">
+                            <div class="bg-white rounded-2xl w-full h-full p-8 flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-semibold text-[#105773] bg-[#F2F2F2] px-3 py-1 rounded-full">Prática Supervisionada</span>
+                                    <span class="text-xs text-slate-400">Ref: 282-ML</span>
+                                </div>
+                                <div class="my-6">
+                                    <h4 class="font-title text-2xl font-bold text-slate-800 leading-snug">"Conseguimos o diagnóstico do meu filho de forma atenciosa, rápida e sem qualquer custo."</h4>
+                                    <p class="text-slate-500 text-sm mt-3">— Maria Auxiliadora, mãe de paciente de Terapia da Fala</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold">M</div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-slate-800">Clínica Universitária Estatal</h5>
+                                        <p class="text-xs text-[#21A680]">Protocolo Académico Ativo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="./script.js"></script>
+
+    <footer class="bg-[#105773] text-white py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm">&copy; 2024 MoreLife. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
