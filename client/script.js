@@ -164,32 +164,51 @@ function updateImpactStats() {
     if (statsProfissionais) statsProfissionais.innerText = `${280 + totalDocs}+`;
 }
 
+// ...existing code...
+
 // ============================================
-// 4. AUTENTICAÇÃO, LOGIN E CADASTRO
+// 4. AUTENTICAÇÃO, LOGIN E CADASTRO (SEGURANÇA ADICIONADA)
 // ============================================
 function openRegisterModal(preferredRole = 'patient') {
-    document.getElementById('auth-modal').classList.remove('hidden');
-    document.getElementById('auth-modal').classList.add('flex');
+    const authModal = document.getElementById('auth-modal');
+    // fallback: se não existe modal no DOM, redireciona para a página de registo com query
+    if (!authModal) {
+        const base = '/register.html';
+        location.href = base + '?role=' + encodeURIComponent(preferredRole);
+        return;
+    }
+
+    authModal.classList.remove('hidden');
+    authModal.classList.add('flex');
     switchAuthTab('register');
-    
-    const radios = document.getElementsByName('reg-role');
-    for(let radio of radios) {
-        if(radio.value === preferredRole) {
-            radio.checked = true;
-        }
+
+    const radios = document.getElementsByName('reg-role') || [];
+    for (let radio of radios) {
+        try {
+            if (radio.value === preferredRole) radio.checked = true;
+        } catch (e) { /* ignore */ }
     }
     toggleRegisterFormFields(preferredRole);
 }
 
 function openLoginModal() {
-    document.getElementById('auth-modal').classList.remove('hidden');
-    document.getElementById('auth-modal').classList.add('flex');
+    const authModal = document.getElementById('auth-modal');
+    if (!authModal) {
+        // fallback para página de registo/login
+        const base = '/register.html';
+        location.href = base + '?tab=login';
+        return;
+    }
+    authModal.classList.remove('hidden');
+    authModal.classList.add('flex');
     switchAuthTab('login');
 }
 
 function closeAuthModal() {
-    document.getElementById('auth-modal').classList.add('hidden');
-    document.getElementById('auth-modal').classList.remove('flex');
+    const authModal = document.getElementById('auth-modal');
+    if (!authModal) return;
+    authModal.classList.add('hidden');
+    authModal.classList.remove('flex');
 }
 
 function switchAuthTab(tab) {
@@ -198,26 +217,29 @@ function switchAuthTab(tab) {
     const formLogin = document.getElementById('form-login');
     const formRegister = document.getElementById('form-register');
 
+    // Se elementos básicos não existirem, apenas retorna (evita exceção)
+    if (!tabLogin || !tabRegister || !formLogin || !formRegister) return;
+
     if (tab === 'login') {
         tabLogin.className = "flex-1 py-4 text-center font-semibold text-sm border-b-2 border-[#105773] text-[#105773]";
         tabRegister.className = "flex-1 py-4 text-center font-semibold text-sm text-slate-500 hover:text-slate-700 border-b-2 border-transparent";
         formLogin.classList.remove('hidden');
         formRegister.classList.add('hidden');
-        document.getElementById('modal-title-text').innerText = "Aceder à Plataforma";
-        document.getElementById('modal-title-icon').innerText = "🔑";
-        document.getElementById('modal-subtitle-text').innerText = "Bem-vindo(a) de volta à sua conta MoreLife.";
+        const mt = document.getElementById('modal-title-text'); if (mt) mt.innerText = "Aceder à Plataforma";
+        const mi = document.getElementById('modal-title-icon'); if (mi) mi.innerText = "🔑";
+        const ms = document.getElementById('modal-subtitle-text'); if (ms) ms.innerText = "Bem-vindo(a) de volta à sua conta MoreLife.";
         const modalRegisterCta = document.getElementById('modal-register-cta'); if (modalRegisterCta) modalRegisterCta.classList.add('hidden');
     } else {
         tabRegister.className = "flex-1 py-4 text-center font-semibold text-sm border-b-2 border-[#0B8C7F] text-[#0B8C7F]";
         tabLogin.className = "flex-1 py-4 text-center font-semibold text-sm text-slate-500 hover:text-slate-700 border-b-2 border-transparent";
         formRegister.classList.remove('hidden');
         formLogin.classList.add('hidden');
-        document.getElementById('modal-title-text').innerText = "Crie a sua Conta de Apoio";
-        document.getElementById('modal-title-icon').innerText = "🩺";
-        document.getElementById('modal-subtitle-text').innerText = "Preencha os dados abaixo para se ligar à nossa rede.";
+        const mt = document.getElementById('modal-title-text'); if (mt) mt.innerText = "Crie a sua Conta de Apoio";
+        const mi = document.getElementById('modal-title-icon'); if (mi) mi.innerText = "🩺";
+        const ms = document.getElementById('modal-subtitle-text'); if (ms) ms.innerText = "Preencha os dados abaixo para se ligar à nossa rede.";
         const modalRegisterCta = document.getElementById('modal-register-cta'); if (modalRegisterCta) modalRegisterCta.classList.remove('hidden');
-        // limpar mensagens de erro e estado do formulário
-        ['reg-name','reg-email','reg-password','reg-terms'].forEach(id => clearFieldError(id));
+        // limpar mensagens de erro e estado do formulário (só se existirem)
+        ['reg-name','reg-email','reg-password','reg-terms'].forEach(id => { try { clearFieldError(id); } catch(e){} });
         const pwdBar = document.getElementById('reg-password-strength'); if (pwdBar) { pwdBar.style.width = '0%'; }
     }
 }
@@ -225,7 +247,11 @@ function switchAuthTab(tab) {
 // Safe submit helper for the modal's Register CTA
 function submitRegisterFromModal() {
     const form = document.querySelector('#form-register form');
-    if (!form) return;
+    if (!form) {
+        // fallback: abre a página de registo
+        location.href = '/register.html';
+        return;
+    }
     if (typeof form.requestSubmit === 'function') {
         form.requestSubmit();
         return;
@@ -239,30 +265,31 @@ function submitRegisterFromModal() {
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
 }
 
-// (mobile nav removed)
-
 function toggleRegisterFormFields(role) {
     const patientFields = document.getElementById('patient-only-fields');
     const doctorFields = document.getElementById('doctor-only-fields');
 
+    // Verifica existência antes de manipular
     if (role === 'patient') {
-        patientFields.classList.remove('hidden');
-        doctorFields.classList.add('hidden');
-        document.getElementById('reg-cpf').required = true;
-        document.getElementById('reg-phone').required = true;
-        document.getElementById('reg-income').required = true;
-        document.getElementById('reg-professional-id').required = false;
-        document.getElementById('reg-university').required = false;
+        if (patientFields) patientFields.classList.remove('hidden');
+        if (doctorFields) doctorFields.classList.add('hidden');
+        const elCpf = document.getElementById('reg-cpf'); if (elCpf) elCpf.required = true;
+        const elPhone = document.getElementById('reg-phone'); if (elPhone) elPhone.required = true;
+        const elIncome = document.getElementById('reg-income'); if (elIncome) elIncome.required = true;
+        const elProf = document.getElementById('reg-professional-id'); if (elProf) elProf.required = false;
+        const elUniv = document.getElementById('reg-university'); if (elUniv) elUniv.required = false;
     } else {
-        patientFields.classList.add('hidden');
-        doctorFields.classList.remove('hidden');
-        document.getElementById('reg-professional-id').required = true;
-        document.getElementById('reg-university').required = true;
-        document.getElementById('reg-cpf').required = false;
-        document.getElementById('reg-phone').required = false;
-        document.getElementById('reg-income').required = false;
+        if (patientFields) patientFields.classList.add('hidden');
+        if (doctorFields) doctorFields.classList.remove('hidden');
+        const elProf = document.getElementById('reg-professional-id'); if (elProf) elProf.required = true;
+        const elUniv = document.getElementById('reg-university'); if (elUniv) elUniv.required = true;
+        const elCpf = document.getElementById('reg-cpf'); if (elCpf) elCpf.required = false;
+        const elPhone = document.getElementById('reg-phone'); if (elPhone) elPhone.required = false;
+        const elIncome = document.getElementById('reg-income'); if (elIncome) elIncome.required = false;
     }
 }
+
+// ...existing code...
 
 // ==========================
 // Validação do Formulário

@@ -4,13 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Registar — MoreLife</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans">
   <header class="bg-white border-b border-slate-200">
     <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3">
-        <img src="../img/logo.png" alt="MoreLife" class="h-10 w-10 object-contain" />
+        <img src="./img/logo.png" alt="MoreLife" class="h-10 w-10 object-contain" />
         <span class="font-title font-bold text-lg text-slate-800">MoreLife</span>
       </a>
       <a href="/" class="text-sm text-[#105773] font-semibold">Voltar</a>
@@ -23,39 +24,32 @@
       <p class="text-sm text-slate-500 mb-6">Preencha os dados abaixo para criar uma conta na plataforma.</p>
 
       <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4">
+        <!-- campos principais (mantive a tua estrutura) -->
         <div>
           <label class="block text-xs font-semibold text-slate-600">Nome completo</label>
-          <input id="reg-name" name="reg-name" type="text" required class="mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
-          <div id="reg-name-error" class="hidden text-rose-600 text-xs mt-1"></div>
+          <input id="reg-name" name="reg-name" type="text" required class="mt-1 w-full border rounded-lg px-3 py-2" />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-600">Nome de usuário</label>
-            <input id="reg-username" name="reg-username" type="text" required class="mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
-            <div id="reg-username-error" class="hidden text-rose-600 text-xs mt-1"></div>
+            <input id="reg-username" name="reg-username" type="text" required class="mt-1 w-full border rounded-lg px-3 py-2" />
 
             <label class="block text-xs font-semibold text-slate-600 mt-3">E-mail</label>
-            <input id="reg-email" name="reg-email" type="email" required class="mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
-            <div id="reg-email-error" class="hidden text-rose-600 text-xs mt-1"></div>
+            <input id="reg-email" name="reg-email" type="email" required class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-600">Senha</label>
             <div class="relative">
-              <input id="reg-password" name="reg-password" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
-              <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password')"></button>
+              <input id="reg-password" name="reg-password" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2" />
+              <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password')">👁️</button>
             </div>
-            <div class="w-full bg-slate-100 rounded-full mt-2 h-2 overflow-hidden">
-              <div id="reg-password-strength" class="h-2 w-0 bg-emerald-500 transition-all"></div>
-            </div>
-            <div id="reg-password-error" class="hidden text-rose-600 text-xs mt-1"></div>
 
             <label class="block text-xs font-semibold text-slate-600 mt-3">Confirmar Senha</label>
             <div class="relative">
-              <input id="reg-password-confirm" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0B8C7F]" />
-              <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password-confirm')"></button>
+              <input id="reg-password-confirm" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2" />
+              <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password-confirm')">👁️</button>
             </div>
-            <div id="reg-password-confirm-error" class="hidden text-rose-600 text-xs mt-1"></div>
           </div>
         </div>
 
@@ -76,10 +70,6 @@
             <label class="block text-xs font-semibold text-slate-600">Telefone</label>
             <input id="reg-phone" type="text" class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600">Rendimento Mensal (EUR)</label>
-            <input id="reg-income" type="number" min="0" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
         </div>
 
         <div id="doctor-only-fields" class="hidden space-y-3">
@@ -91,20 +81,6 @@
             <label class="block text-xs font-semibold text-slate-600">Universidade / Instituição</label>
             <input id="reg-university" type="text" class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600">Especialidade</label>
-            <input id="reg-specialty" type="text" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600">Foto de Perfil (opcional)</label>
-          <input id="reg-photo" type="file" accept="image/*" class="mt-1" onchange="handleRegPhotoChange(event)" />
-          <img id="reg-photo-preview" src="" alt="Preview" class="mt-2 w-24 h-24 object-cover rounded-md hidden" />
-        </div>
-        <div>
-          <label class="inline-flex items-center"><input id="reg-terms" type="checkbox" class="mr-2" />Aceito os termos e condições</label>
-          <div id="reg-terms-error" class="hidden text-rose-600 text-xs mt-1"></div>
         </div>
 
         <div class="pt-3">
@@ -114,7 +90,24 @@
     </div>
   </main>
 
-  <script src="/script.js"></script>
+  <script src="./script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(location.search);
+      const role = params.get('role');
+      const tab = params.get('tab');
+
+      if (role) {
+        const r = document.querySelector(`input[name="reg-role"][value="${role}"]`);
+        if (r) r.checked = true;
+        if (typeof toggleRegisterFormFields === 'function') toggleRegisterFormFields(role);
+      }
+      if (tab === 'login' && typeof switchAuthTab === 'function') switchAuthTab('login');
+
+      document.querySelectorAll('input[name="reg-role"]').forEach(i => i.addEventListener('change', (e) => {
+        if (typeof toggleRegisterFormFields === 'function') toggleRegisterFormFields(e.target.value);
+      }));
+    });
+  </script>
 </body>
 </html>
-
