@@ -8,22 +8,11 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans">
-  <header class="bg-white border-b border-slate-200">
-    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3">
-        <img src="../img/logo.png" alt="MoreLife" class="h-10 w-10 object-contain" />
-        <span class="font-title font-bold text-lg text-slate-800">MoreLife</span>
-      </a>
-    </div>
-  </header>
-
   <main class="max-w-3xl mx-auto px-4 py-12">
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
       <h1 class="text-2xl font-bold text-slate-800 mb-2">Criar Conta</h1>
-      <p class="text-sm text-slate-500 mb-6">Preencha os dados abaixo para criar uma conta na plataforma.</p>
 
-      <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4">
-        <!-- campos principais (mantive a tua estrutura) -->
+      <form id="form-register" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-600">Nome completo</label>
           <input id="reg-name" name="reg-name" type="text" required class="mt-1 w-full border rounded-lg px-3 py-2" />
@@ -37,26 +26,21 @@
             <label class="block text-xs font-semibold text-slate-600 mt-3">E-mail</label>
             <input id="reg-email" name="reg-email" type="email" required class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
+
           <div>
             <label class="block text-xs font-semibold text-slate-600">Senha</label>
-            <div class="relative">
-              <input id="reg-password" name="reg-password" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2" />
-              <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password')"></button>
-            </div>
+            <input id="reg-password" name="reg-password" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2" />
 
             <label class="block text-xs font-semibold text-slate-600 mt-3">Confirmar Senha</label>
-            <div class="relative">
-              <input id="reg-password-confirm" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2" />
-              <button type="button" class="absolute right-3 top-3 text-slate-400" onclick="togglePasswordVisibility('reg-password-confirm')"></button>
-            </div>
+            <input id="reg-password-confirm" type="password" required class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
         </div>
 
         <div>
           <span class="block text-xs font-semibold text-slate-600">Tipo de Conta</span>
           <div class="flex items-center gap-4 mt-2">
-            <label class="inline-flex items-center"><input type="radio" name="reg-role" value="patient" checked onclick="toggleRegisterFormFields('patient')" class="mr-2">Paciente</label>
-            <label class="inline-flex items-center"><input type="radio" name="reg-role" value="doctor" onclick="toggleRegisterFormFields('doctor')" class="mr-2">Médico</label>
+            <label class="inline-flex items-center"><input type="radio" name="reg-role" value="patient" checked class="mr-2">Paciente</label>
+            <label class="inline-flex items-center"><input type="radio" name="reg-role" value="doctor" class="mr-2">Médico</label>
           </div>
         </div>
 
@@ -69,6 +53,7 @@
             <label class="block text-xs font-semibold text-slate-600">Telefone</label>
             <input id="reg-phone" type="text" class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
+         
         </div>
 
         <div id="doctor-only-fields" class="hidden space-y-3">
@@ -80,6 +65,15 @@
             <label class="block text-xs font-semibold text-slate-600">Universidade / Instituição</label>
             <input id="reg-university" type="text" class="mt-1 w-full border rounded-lg px-3 py-2" />
           </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600">Especialidade</label>
+            <input id="reg-specialty" type="text" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600">Foto de Perfil (opcional)</label>
+          <input id="reg-photo" type="file" accept="image/*" class="mt-1" />
         </div>
 
         <div class="pt-3">
@@ -91,22 +85,17 @@
 
   <script src="./script.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    // aplica role via query param e liga campos dinâmicos (se toggleRegisterFormFields existir no script)
+    (function(){
       const params = new URLSearchParams(location.search);
       const role = params.get('role');
-      const tab = params.get('tab');
+      if (role && typeof toggleRegisterFormFields === 'function') toggleRegisterFormFields(role);
 
-      if (role) {
-        const r = document.querySelector(`input[name="reg-role"][value="${role}"]`);
-        if (r) r.checked = true;
-        if (typeof toggleRegisterFormFields === 'function') toggleRegisterFormFields(role);
-      }
-      if (tab === 'login' && typeof switchAuthTab === 'function') switchAuthTab('login');
-
-      document.querySelectorAll('input[name="reg-role"]').forEach(i => i.addEventListener('change', (e) => {
-        if (typeof toggleRegisterFormFields === 'function') toggleRegisterFormFields(e.target.value);
-      }));
-    });
+      const form = document.getElementById('form-register');
+      if (form) form.addEventListener('submit', function(e){
+        if (typeof handleRegister === 'function') { handleRegister(e); } else { e.preventDefault(); alert('handleRegister não definido em script.js'); }
+      });
+    })();
   </script>
 </body>
 </html>
