@@ -455,21 +455,21 @@ async function handleForgotPassword() {
     showToast('Enviámos instruções para o seu e-mail (mock).', 'success');
 }
 
+// ...existing code...
 async function handleRegister(e) {
     e.preventDefault();
     const db = getDatabase();
 
-    // client-side validation
     if (!validateRegisterForm()) {
         showToast('Por favor, corrija os campos assinalados e tente novamente.', 'error');
         return;
     }
 
-    const name = document.getElementById('reg-name').value.trim();
-    const username = document.getElementById('reg-username').value.trim();
-    const email = document.getElementById('reg-email').value.trim().toLowerCase();
-    const password = document.getElementById('reg-password').value;
-    const role = document.querySelector('input[name="reg-role"]:checked').value;
+    const name = (document.getElementById('reg-name') || { value: '' }).value.trim();
+    const username = (document.getElementById('reg-username') || { value: '' }).value.trim();
+    const email = (document.getElementById('reg-email') || { value: '' }).value.trim().toLowerCase();
+    const password = (document.getElementById('reg-password') || { value: '' }).value;
+    const role = (document.querySelector('input[name="reg-role"]:checked') || { value: 'patient' }).value;
 
     if (db.users.find(u => u.email === email)) {
         setFieldError('reg-email', 'Este endereço de e-mail já se encontra registado.');
@@ -492,46 +492,48 @@ async function handleRegister(e) {
     };
 
     if (role === 'patient') {
-        newUser.cpf = document.getElementById('reg-cpf').value;
-        newUser.phone = document.getElementById('reg-phone').value;
-        newUser.income = document.getElementById('reg-income').value;
+        newUser.cpf = (document.getElementById('reg-cpf') || { value: '' }).value;
+        newUser.phone = (document.getElementById('reg-phone') || { value: '' }).value;
+        newUser.income = (document.getElementById('reg-income') || { value: '' }).value;
     } else {
-        newUser.professionalId = document.getElementById('reg-professional-id').value;
-        newUser.university = document.getElementById('reg-university').value;
-        newUser.specialty = document.getElementById('reg-specialty').value;
+        newUser.professionalId = (document.getElementById('reg-professional-id') || { value: '' }).value;
+        newUser.university = (document.getElementById('reg-university') || { value: '' }).value;
+        newUser.specialty = (document.getElementById('reg-specialty') || { value: '' }).value;
     }
 
-    // profile photo
     const photoInput = document.getElementById('reg-photo');
     if (photoInput && photoInput.files && photoInput.files[0]) {
-        try {
-            newUser.photo = await readFileAsDataURL(photoInput.files[0]);
-        } catch (err) {
-            console.warn('photo read failed', err);
-        }
-    } else {
-        newUser.photo = null;
-    }
+        try { newUser.photo = await readFileAsDataURL(photoInput.files[0]); } catch (err) { console.warn('photo read failed', err); newUser.photo = null; }
+    } else newUser.photo = null;
 
     try {
-        // hash password before storing
         newUser.password = await hashString(password);
-
         db.users.push(newUser);
         saveDatabase(db);
         showToast(`Conta criada com sucesso! Bem-vindo(a), ${name.split(' ')[0]}.`, 'success');
 
         currentUser = newUser;
+        // guarda sessão para que index.html recupere o utilizador
         sessionStorage.setItem('ML_ACTIVE_USER', JSON.stringify(currentUser));
 
-        closeAuthModal();
-        renderSystem();
-        updateImpactStats();
+        // se houver modal, fecha e atualiza
+        try { closeAuthModal(); } catch(e) {}
+        try { updateImpactStats(); } catch(e) {}
+        try { renderSystem(); } catch(e) {}
+
+        // Se estivermos na página de registo, redireciona para index para mostrar painel correcto
+        const p = location.pathname.toLowerCase();
+        if (p.endsWith('register.html') || p.includes('/register')) {
+            // usa caminho relativo (index.html) para não depender do root do servidor
+            location.href = 'index.html';
+            return;
+        }
     } catch (err) {
         console.error('Register save error', err);
         showToast('Ocorreu um erro ao gravar a sua conta. Tente novamente mais tarde.', 'error');
     }
 }
+// ...existing code...
 
 async function handleLogin(e) {
     e.preventDefault();
