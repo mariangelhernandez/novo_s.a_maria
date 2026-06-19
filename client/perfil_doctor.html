@@ -1,11 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-PT">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard Clínico | MoreLife</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ml-primary': '#105773',
+                        'ml-secondary': '#0B8C7F',
+                        'ml-accent': '#21A680',
+                        'ml-success': '#4BBF73',
+                        'ml-bg': '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        .sidebar-item-active { background: rgba(16, 87, 115, 0.08); border-right: 4px solid #105773; color: #105773; font-weight: 700; }
+        .glass-card { background: white; border: 1px solid #e2e8f0; }
+    </style>
 </head>
-<body>
-    
+<body class="bg-ml-bg min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-slate-200 hidden lg:flex flex-col sticky top-0 h-screen z-50">
+        <div class="p-8">
+            <img src="../img/logo.png" alt="MoreLife" class="h-10 cursor-pointer" onclick="location.href='index.html'">
+        </div>
+        
+        <nav class="flex-grow px-4 space-y-2" id="sidebar-nav">
+            <button onclick="switchView('triagem')" id="btn-triagem" class="sidebar-item-active w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-600 hover:bg-slate-50">
+                <span class="text-xl">📋</span> Triagem de Casos
+            </button>
+            <button onclick="switchView('agenda')" id="btn-agenda" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-600 hover:bg-slate-50 font-medium">
+                <span class="text-xl">📅</span> Minha Agenda
+            </button>
+            <button onclick="switchView('pacientes')" id="btn-pacientes" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-slate-600 hover:bg-slate-50 font-medium">
+                <span class="text-xl">👥</span> Meus Pacientes
+            </button>
+        </nav>
+
+        <div class="p-6 border-t border-slate-100">
+            <button onclick="handleLogout()" class="flex items-center gap-3 text-rose-500 font-bold hover:bg-rose-50 w-full px-4 py-3 rounded-xl transition-all">
+                <span class="text-xl">🚪</span> Sair da Conta
+            </button>
+        </div>
+    </aside>
+
+    <!-- Área Principal -->
+    <main class="flex-grow flex flex-col">
+        <!-- Header -->
+        <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+            <h2 id="view-title" class="font-title text-xl font-extrabold text-ml-primary uppercase tracking-tight">Triagem de Casos</h2>
+            
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-slate-800" id="doctor-name-badge">Dr. Roberto Silva</p>
+                    <p class="text-[10px] font-black text-ml-secondary uppercase tracking-widest" id="doctor-specialty-badge">Medicina Dentária</p>
+                </div>
+                <div class="relative group">
+                    <img id="doctor-photo-header" src="https://ui-avatars.com/api/?name=Doc&background=105773&color=fff" class="w-10 h-10 rounded-full border-2 border-ml-accent cursor-pointer object-cover" alt="Avatar">
+                    <label class="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity text-[10px]">
+                        Alterar
+                        <input type="file" class="hidden" onchange="handlePhotoUpload(event, 'doctor-photo-header')">
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-6xl mx-auto w-full">
+            
+            <!-- Resumo Global (Widgets) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="glass-card p-6 rounded-2xl shadow-sm">
+                    <p class="text-slate-400 text-[10px] font-bold uppercase mb-2">Pedidos na sua área</p>
+                    <span class="text-3xl font-black text-ml-primary" id="doctor-pending-count">0</span>
+                </div>
+                <div class="glass-card p-6 rounded-2xl shadow-sm">
+                    <p class="text-slate-400 text-[10px] font-bold uppercase mb-2">Consultas Marcadas</p>
+                    <span class="text-3xl font-black text-slate-800" id="doctor-agenda-count">0</span>
+                </div>
+                <div class="bg-ml-primary p-6 rounded-2xl text-white shadow-lg shadow-ml-primary/20">
+                    <p class="text-white/60 text-[10px] font-bold uppercase mb-2">Universidade</p>
+                    <span class="text-sm font-bold block truncate" id="doctor-university-badge">---</span>
+                    <span class="text-[10px] opacity-70 mt-1 block" id="doctor-register-badge">Reg: ---</span>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: TRIAGEM (Visível por padrão) -->
+            <section id="section-triagem" class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-title font-bold text-slate-800 text-lg">Novas Solicitações de Apoio</h3>
+                </div>
+                <div id="doctor-pending-requests-list" class="space-y-4">
+                    <!-- O script.js vai preencher isto -->
+                </div>
+            </section>
+
+            <!-- SEÇÃO: AGENDA (Escondida por padrão) -->
+            <section id="section-agenda" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-title font-bold text-slate-800 text-lg">Consultas Confirmadas</h3>
+                </div>
+                <div id="doctor-confirmed-appointments" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- O script.js vai preencher isto -->
+                </div>
+            </section>
+
+            <!-- SEÇÃO: MEUS PACIENTES (Escondida por padrão) -->
+            <section id="section-pacientes" class="hidden space-y-6">
+                <h3 class="font-title font-bold text-slate-800 text-lg">Lista de Pacientes Atendidos</h3>
+                <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center text-slate-400">
+                    <span class="text-4xl block mb-4">👥</span>
+                    <p>Esta funcionalidade estará disponível em breve no seu painel.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de Agendamento -->
+    <div id="approve-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10">
+            <div class="text-center mb-8">
+                <span class="text-4xl">🏥</span>
+                <h3 class="text-xl font-bold text-ml-primary font-title mt-4">Confirmar Atendimento</h3>
+                <p class="text-sm text-slate-500">Defina os detalhes para o paciente receber a notificação.</p>
+            </div>
+            
+            <form id="form-approve-appointment" class="space-y-5" onsubmit="handleApproveSubmit(event)">
+                <input type="hidden" id="approve-appointment-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Data</label>
+                        <input type="date" id="approve-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-ml-primary outline-none transition-all">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Hora</label>
+                        <input type="time" id="approve-time" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-ml-primary outline-none transition-all">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Clínica / Gabinete</label>
+                    <input type="text" id="approve-location" placeholder="Ex: Piso 2, Gabinete 10" required class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-ml-primary outline-none transition-all">
+                </div>
+                
+                <div class="flex flex-col gap-3 pt-4">
+                    <button type="submit" class="w-full py-4 bg-ml-primary text-white font-bold rounded-2xl shadow-xl hover:bg-ml-secondary transition-all">Finalizar Agendamento</button>
+                    <button type="button" onclick="closeApproveModal()" class="w-full py-2 text-slate-400 text-xs font-semibold hover:text-slate-600 transition-all">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Lógica para trocar de ecrã na Sidebar
+        function switchView(view) {
+            // Esconder todas as secções
+            document.getElementById('section-triagem').classList.add('hidden');
+            document.getElementById('section-agenda').classList.add('hidden');
+            document.getElementById('section-pacientes').classList.add('hidden');
+
+            // Remover estilo ativo de todos os botões
+            document.getElementById('btn-triagem').classList.remove('sidebar-item-active');
+            document.getElementById('btn-agenda').classList.remove('sidebar-item-active');
+            document.getElementById('btn-pacientes').classList.remove('sidebar-item-active');
+
+            // Mostrar a secção selecionada e ativar botão
+            if(view === 'triagem') {
+                document.getElementById('section-triagem').classList.remove('hidden');
+                document.getElementById('btn-triagem').classList.add('sidebar-item-active');
+                document.getElementById('view-title').innerText = "Triagem de Casos";
+            } else if(view === 'agenda') {
+                document.getElementById('section-agenda').classList.remove('hidden');
+                document.getElementById('btn-agenda').classList.add('sidebar-item-active');
+                document.getElementById('view-title').innerText = "Minha Agenda";
+            } else if(view === 'pacientes') {
+                document.getElementById('section-pacientes').classList.remove('hidden');
+                document.getElementById('btn-pacientes').classList.add('sidebar-item-active');
+                document.getElementById('view-title').innerText = "Meus Pacientes";
+            }
+        }
+
+        // Upload de foto de perfil
+        function handlePhotoUpload(event, previewId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById(previewId).src = e.target.result;
+                    // Opcional: Guardar no banco de dados local aqui
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 </body>
 </html>
